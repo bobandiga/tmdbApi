@@ -10,9 +10,30 @@ import UIKit
 
 class LoadbuttonModel: UIButton {
 
-    private var popularPage = 1
-    private var topRated = 1
-    private var upComing = 1
+    private var popularPage : Int{
+        get{
+            return UserDefaults.standard.integer(forKey: "popularPage")
+        }
+        set(new){
+            UserDefaults.standard.set(new, forKey: "popularPage")
+        }
+    }
+    private var topRated : Int{
+        get{
+            return UserDefaults.standard.integer(forKey: "topRatedPage")
+        }
+        set(new){
+            UserDefaults.standard.set(new, forKey: "topRatedPage")
+        }
+    }
+    private var upComing : Int{
+        get{
+            return UserDefaults.standard.integer(forKey: "upcomingPage")
+        }
+        set(new){
+            UserDefaults.standard.set(new, forKey: "upcomingPage")
+        }
+    }
     
     private var service = Service()
     
@@ -52,27 +73,35 @@ class LoadbuttonModel: UIButton {
             break
         }
         
+        print("popular : \(popularPage)")
+        print("top rated : \(topRated)")
+        print("upcoming : \(upComing)")
         
-        
-        for p in 1...pp{
-            service.fetch(activityIndicator: activityIndicator, r: request, page: p, { (movies) in
-                if let movies = movies{
-                    for m in movies{
-                        arrMovies?.append(m)
+        if increas{
+            service.fetch(activityIndicator: activityIndicator, r: request, page: pp, { (movies) in
+                arrMovies = movies
+                block(arrMovies)
+                finished()
+            }, nil)
+        }else{
+            for p in 1...pp{
+                service.fetch(activityIndicator: activityIndicator, r: request, page: p, { (movies) in
+                    if let movies = movies{
+                        for m in movies{
+                            arrMovies?.append(m)
+                        }
                     }
-                }
-                //print(arrMovies)
-                if p == pp{
-                    block(arrMovies)
-                    finished()
-                }
-                
-            }, {
-                
-            })
+                    //print(arrMovies)
+                    if p == pp{
+                        block(arrMovies)
+                        finished()
+                    }
+                    
+                }, {
+                    
+                })
+            }
         }
-        
-        
         
     }
 

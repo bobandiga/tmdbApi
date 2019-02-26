@@ -85,7 +85,7 @@ class CollectionModel: NSObject {
         
         sender.isUserInteractionEnabled = false
         
-        collectionViewCellModelArray = []
+        //collectionViewCellModelArray = []
         collectionView.isUserInteractionEnabled = false
         
         sender.request(activityIndicator: activityIndicator, request, increas: true, block: { (movies) in

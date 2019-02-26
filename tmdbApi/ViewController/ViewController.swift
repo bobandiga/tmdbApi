@@ -20,6 +20,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        UserDefaults.standard.set(1, forKey: "popularPage")
+        UserDefaults.standard.set(1, forKey: "upcomingPage")
+        UserDefaults.standard.set(1, forKey: "topRatedPage")
+        
         collectionModel.setupCollectionView()
         collectionModel.fetchData {
             DispatchQueue.main.async {
