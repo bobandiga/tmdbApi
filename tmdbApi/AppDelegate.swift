@@ -8,14 +8,28 @@
 
 import UIKit
 
+let API_KEY = "32eeaecb997dcef09b7f0b740f9a1b08"
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    lazy var navigationController : UINavigationController = {
+        let navigationController = UINavigationController()
+        navigationController.isNavigationBarHidden = true
+        return navigationController
+    }()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.makeKeyAndVisible()
+        window?.rootViewController = navigationController
+        
+        let mainView = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MainViewController") as? MainViewController
+        self.navigationController.viewControllers = [mainView!]
+        
         return true
     }
 
