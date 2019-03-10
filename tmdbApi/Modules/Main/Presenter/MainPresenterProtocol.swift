@@ -15,8 +15,8 @@ protocol MainPresenterProtocol {
     var wireframe : MainWireframeProtocol? {get}
     var interactor : MainInteractorProtocol? {get}
     
-    func presentData(with url : String, urlType : URLType)
-    func outputData(json : [MovieModel])
+    func presentData(with url : String)
+    func outputData(json : [MovieModel], append : Bool)
     
 }
 

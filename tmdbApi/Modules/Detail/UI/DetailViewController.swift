@@ -55,6 +55,7 @@ extension DetailViewController: DetailViewControllerProtocol{
         voteAvarageLabel.text = model?.voteAvarage
         companiesLabel.text = model?.companies
         genresLabel.text = model?.genres
+        imageView.image = model?.posterImage
     }
     
     

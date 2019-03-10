@@ -13,7 +13,7 @@ protocol MenuWireframeProtocol {
     
     var viewController : UIViewController? {get}
     
-    func dismiss(with url : String, title : String, urlType : URLType)
+    func dismiss(with url : String, title : String)
     
     func showAI()
     

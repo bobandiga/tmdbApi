@@ -19,10 +19,16 @@ class DetailWorker : Worker{
     
     func parseData(json : JSON?, for movie :  MovieModel) -> MovieModel{
         let array = super.parseData(with: json, parseType: .movieDetail) as! [[String]]
+        print(array)
+        if !array.isEmpty{
+            let mm = MovieModel(id: movie.id, title: movie.title, originalTitle: movie.originalTitle, posterImage: movie.posterImage, imagePath: movie.imagePath, releaseDate: movie.releaseDate, voteAvarage: movie.voteAvarage, overview: movie.overview, genres: array[0], companies: array[1])
+            
+            return mm
+
+        }else{
+            return movie
+        }
         
-        let mm = MovieModel(id: movie.id, title: movie.title, originalTitle: movie.originalTitle, posterImage: movie.posterImage, imagePath: movie.imagePath, releaseDate: movie.releaseDate, voteAvarage: movie.voteAvarage, overview: movie.overview, genres: array[0], companies: array[1])
-        
-        return movie
     }
     
 }

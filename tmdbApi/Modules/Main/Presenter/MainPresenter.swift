@@ -15,17 +15,27 @@ class MainPresenter: MainPresenterProtocol {
     var wireframe: MainWireframeProtocol?
     var interactor: MainInteractorProtocol?
     
-    func outputData(json: [MovieModel]) {
+    func outputData(json: [MovieModel], append : Bool) {
         print("output data")
-        view?.showData(array: json)
+        
+        if json.isEmpty{
+            view?.showError()
+        }
+        
+        if append{
+            view?.updateData(array: json)
+        }else{
+            view?.showData(array: json)
+        }
+        
         view?.hideAI()
 
     }
     
-    func presentData(with url: String, urlType : URLType) {
+    func presentData(with url: String) {
         print("present data")
-        view?.showAI()
-        interactor?.fetchData(with: url, urlType: urlType)
+        self.view?.showAI()
+        interactor?.fetchData(with: url)
     }
     
 }

@@ -24,15 +24,15 @@ class MenuViewController : UIViewController{
     
     @IBAction func popularHandle(_ sender: UIButton) {
         
-        presenter?.wireframe?.dismiss(with: URLString.url(with: .popular, language: .en), title: (sender.titleLabel?.text)!, urlType: .popular)
+        presenter?.wireframe?.dismiss(with: URLString.url(with: .popular, language: .en), title: (sender.titleLabel?.text)!)
     }
     
     @IBAction func topratedHndle(_ sender: UIButton) {
-        presenter?.wireframe?.dismiss(with: URLString.url(with: .top_rated, language: .en), title: (sender.titleLabel?.text)!, urlType: .top_rated)
+        presenter?.wireframe?.dismiss(with: URLString.url(with: .top_rated, language: .en), title: (sender.titleLabel?.text)!)
     }
     
     @IBAction func upcomingHandle(_ sender: UIButton) {
-        presenter?.wireframe?.dismiss(with: URLString.url(with: .upcoming, language: .en), title: (sender.titleLabel?.text)!, urlType: .upcoming)
+        presenter?.wireframe?.dismiss(with: URLString.url(with: .upcoming, language: .en), title: (sender.titleLabel?.text)!)
     }
     
 }

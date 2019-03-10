@@ -9,20 +9,8 @@
 import Foundation
 import UIKit
 
-protocol CachingData {
-    func savePage(movies : [MovieModel], with url: String, urlType : URLType)
-}
-
-protocol CachingImages {
-    func saveImage()
-}
-
-protocol UploadCachingData {
-    func readPage(with url: String, urlType : URLType) -> [MovieModel]
-}
-
-protocol LoadData {
-    func loadData()
+protocol GetImageProtocol {
+    func getImage(with url : URL, _ completion : @escaping (_ image: UIImage?) -> ())
 }
 
 class Cache{
@@ -33,71 +21,108 @@ class Cache{
     
     var imageCache = NSCache<NSString, UIImage>()
     
-    var popularPage = 1
-    var upcomingPage = 0
-    var topRatedPage = 0
-    
-    var popularMovies = Dictionary<String, [MovieModel]>()
-    var upcomingMovies = Dictionary<String, [MovieModel]>()
-    var topRatedMovies = Dictionary<String, [MovieModel]>()
-    
-}
-
-extension Cache : UploadCachingData{
-    
-    func readPage(with url: String, urlType : URLType) -> [MovieModel] {
-        switch urlType {
-        case .popular:
-            return popularMovies[url] ?? []
-        case .upcoming:
-            return upcomingMovies[url] ?? []
-        case .top_rated:
-            return topRatedMovies[url] ?? []
-        case .none:
-            return []
-        }
-    }
-    
-    
-}
-
-extension Cache : CachingData{
-    
-    func savePage(movies : [MovieModel], with url : String, urlType : URLType) {
-        switch urlType {
-        case .popular:
-                popularMovies[url] = movies
-            break
-        case .upcoming:
-                upcomingMovies[url] = movies
-            break
-        case .top_rated:
-                topRatedMovies[url] = movies
-            break
-        case .none:
-            break
-        }
+    private func downloadImage(with url : URL, _ completion : @escaping (_ image: UIImage?) -> ()){
+        
+        //DispatchQueue.main.async {
+            do{
+                let data = try Data(contentsOf: url)
+                let posterImage = UIImage(data: data)!
+                self.imageCache.setObject(posterImage, forKey: url.absoluteString as NSString)
+                completion(posterImage)
+            }catch{
+            completion(nil)
+            }
+        //}
         
     }
+
     
-    
-    
-    
-//    func downloadImage(with url : URL, _ completion : @escaping (_ image: UIImage?) -> ()){
+//    var popularPage = 1
+//    var upcomingPage = 0
+//    var topRatedPage = 0
 //
-//        do{
-//            let data = try Data(contentsOf: url)
-//            let posterImage = UIImage(data: data)!
-//            imageCache.setObject(posterImage, forKey: url.absoluteString as NSString)
-//            completion(posterImage)
-//        }catch{
-//            completion(nil)
+//    var popularMovies = [MovieModel]()
+//    var lastUrlPopular = ""
+//
+//    var upcomingMovies = [MovieModel]()
+//    var lastUrlUpcoming = ""
+//
+//    var topRatedMovies = [MovieModel]()
+//    var lastUrlTopRated = ""
+    
+}
+
+extension Cache : GetImageProtocol{
+    
+    func getImage(with url: URL, _ completion: @escaping (UIImage?) -> ()) {
+        if let image = imageCache.object(forKey: url.absoluteString as NSString){
+            completion(image)
+        }else{
+            downloadImage(with: url, completion)
+        }
+
+    }
+    
+    
+}
+
+//extension Cache : UploadCachingData{
+//
+//    func readPage(with url: String, view : CurrentView) -> [MovieModel] {
+//        switch view {
+//        case .popular:
+//            return popularMovies
+//        case .upcoming:
+//            return upcomingMovies
+//        case .top_rated:
+//            return topRatedMovies
+//        case .none:
+//            return []
+//        }
+//    }
+//
+//
+//}
+//
+//extension Cache : CachingData{
+//
+//    func saveImage(movies : [MovieModel], with url : String, view : CurrentView) {
+//
+//        switch view {
+//        case .popular:
+//
+//            lastUrlPopular = url
+//            for movie in movies{
+//                popularMovies.append(movie)
+//            }
+//            print(popularMovies.count)
+//
+//            break
+//        case .upcoming:
+//
+//            lastUrlUpcoming = url
+//            for movie in movies{
+//                upcomingMovies.append(movie)
+//            }
+//
+//            break
+//        case .top_rated:
+//
+//            lastUrlTopRated = url
+//            for movie in movies{
+//                topRatedMovies.append(movie)
+//            }
+//
+//            break
+//        case .none:
+//            break
 //        }
 //
-//        //print("download")
-//
-//
 //    }
+//
+//
+
+    
 //
 //    func getImage(with url : URL, _ completion : @escaping (_ image: UIImage?) -> ()) {
 //        if let image = imageCache.object(forKey: url.absoluteString as NSString){
@@ -110,4 +135,4 @@ extension Cache : CachingData{
 
     
     
-}
+

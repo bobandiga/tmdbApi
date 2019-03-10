@@ -19,9 +19,13 @@ class DetailPresenter : DetailPresenterProtocol{
 
     func outputData(with json : JSON?) {
         
-        let movieModel = interactor?.detailWorker?.parseData(json: json, for: movie!)
+        if let json = json{
+            let movieModel = interactor?.detailWorker?.parseData(json: json, for: movie!)
+            view?.showData(model: movieModel)
+        }else{
+            view?.showData(model: movie!)
+        }
         
-        view?.showData(model: movieModel)
         view?.hideAI()
         
     }

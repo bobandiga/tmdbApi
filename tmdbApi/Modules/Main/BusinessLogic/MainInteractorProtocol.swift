@@ -14,12 +14,9 @@ protocol MainInteractorProtocol {
     
     var presenter : MainPresenterProtocol? {get set}
     
-    func fetchData(with url : String)
-    func fetchImage(for models : [MovieModel]?, _ block : @escaping ([MovieModel]) -> ())
+    //func fetchImage(for models : [MovieModel]?, _ block : @escaping ([MovieModel]) -> ())
     
-    func fetchDataFromLoadButton(with url : String)
-    func fetchDataFromMenuButton(with url : String, urlType : URLType)
-    func fetchData(with url : String, urlType : URLType)
+    func fetchData(with url : String)
     
 }
 

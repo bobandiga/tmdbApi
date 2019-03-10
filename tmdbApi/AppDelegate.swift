@@ -30,6 +30,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let mainView = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MainViewController") as? MainViewController
         self.navigationController.viewControllers = [mainView!]
         
+//        URLCache.init(memoryCapacity: 128*1024*1024, diskCapacity: 128*1024*1024, diskPath: "MyDiskPath")
+//        URLCache.shared.removeAllCachedResponses()
+        
         return true
     }
 

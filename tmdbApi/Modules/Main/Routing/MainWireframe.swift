@@ -12,7 +12,6 @@ import UIKit
 class MainWireframe: MainWireframeProtocol {
     
     func presentMenu() {
-        print("present menu")
         let mvc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MenuViewController") as? MenuViewController
         viewController?.present(mvc!, animated: true, completion: nil)
     }

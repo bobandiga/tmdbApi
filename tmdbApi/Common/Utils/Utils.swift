@@ -11,18 +11,12 @@ import UIKit
 import SwiftyJSON
 import Alamofire
 
-protocol FetchImageFromURL {
-    func getImageFromModel(model : MovieModel, _ block : @escaping (UIImage?) -> ())
-}
-
 protocol FetchDataProtocol {
-    
     func fetchData(with url : String, _ block : @escaping (JSON?) -> ())
     
 }
 
 protocol ParseDataProtocol {
-    
     func parseData(with data : JSON?, parseType : ParseType) -> [Any]
     
 }
@@ -33,7 +27,7 @@ enum ParseType {
 }
 
 
-enum URLType : String{
+enum CurrentView : String{
     case popular = "popular"
     case top_rated = "top_rated"
     case upcoming = "upcoming"
@@ -47,46 +41,55 @@ enum LanguageType : String{
 
 class URLString {
     
-    private static var last = URLType.popular
+    private static var last = CurrentView.popular
     
     private static var popularPage = 1
     private static var top_ratedPage = 1
     private static var upcomingPage = 1
     
-    static func url(with urlType : URLType = last, language : LanguageType, loadMore : Bool = false) -> String{
+    static func url(with viewType : CurrentView = last, language : LanguageType, loadMore : Bool = false) -> String{
         
         var page : Int = 0
         
-        switch urlType {
+        switch viewType {
             
         case .popular:
-            page = popularPage
             
             if loadMore{
                 popularPage += 1
+            }else{
+                popularPage = 1
             }
             
+            page = popularPage
+            
         case .top_rated:
-            page = top_ratedPage
             
             if loadMore{
                 top_ratedPage += 1
+            }else{
+                top_ratedPage = 1
             }
             
+            page = top_ratedPage
+            
         case .upcoming:
-            page = upcomingPage
             
             if loadMore{
                 upcomingPage += 1
+            }else{
+                upcomingPage = 1
             }
+            
+            page = upcomingPage
             
         case .none:
             break
         }
         
-        last = urlType
+        last = viewType
         
-        return "https://api.themoviedb.org/3/movie/\(urlType.rawValue)?api_key=\(API_KEY)&language=\(language.rawValue)-US&page=\(page)"
+        return "https://api.themoviedb.org/3/movie/\(viewType.rawValue)?api_key=\(API_KEY)&language=\(language.rawValue)-US&page=\(page)"
     }
     
 }
@@ -95,23 +98,37 @@ class URLString {
 class Worker  : FetchDataProtocol, ParseDataProtocol{
     
     func fetchData(with url: String, _ block: @escaping (JSON?) -> ()) {
-        let req = URLRequest(url: URL(string: url)!, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 15)
-        request(req).validate().responseJSON { (response) in
-            if response.response?.statusCode == 200{
-                do{
-                    let json = try JSON(data: response.data!)
-                    //print(json)
-                    block(json)
-                }catch{
+        let req = URLRequest(url: URL(string: url)!, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 15)
+        
+//        if let response = URLCache.shared.cachedResponse(for: req){
+//            do{
+//                let json = try JSON(data: response.data)
+//                block(json)
+//            }catch{
+//                block(nil)
+//            }
+//        }else{
+            request(req).validate().responseJSON { (response) in
+                if response.response?.statusCode == 200{
+                    
+//                    if response.data != nil, response.response != nil{
+//                        URLCache.shared.storeCachedResponse(CachedURLResponse(response: response.response!, data: response.data!), for: req)
+//                    }
+                    do{
+                        let json = try JSON(data: response.data!)
+                        block(json)
+                    }catch{
+                        block(nil)
+                    }
+                }else{
                     block(nil)
                 }
-            }else{
-                block(nil)
             }
-        }
+//        }
     }
     
     func parseData(with data: JSON?, parseType: ParseType) -> [Any] {
+        
         switch parseType {
         case .movies:
             
@@ -132,11 +149,15 @@ class Worker  : FetchDataProtocol, ParseDataProtocol{
                     
                     var posterImage : UIImage? = nil
                     
+                    Cache.shared.getImage(with: imageUrl) { (image) in
+                        posterImage = image
+                    }
+                    
                     let releaseDate = result["release_date"].stringValue
                     let voteAvarage = result["vote_average"].stringValue
                     let overview = result["overview"].stringValue
                     
-                    let movie = MovieModel(id: id, title: title, originalTitle: originalTitle, posterImage: posterImage ?? UIImage(named: "question"), imagePath: imageUrl, releaseDate: releaseDate, voteAvarage: voteAvarage, overview: overview, genres: [], companies: [])
+                    let movie = MovieModel(id: id, title: title, originalTitle: originalTitle, posterImage: posterImage, imagePath: imageUrl, releaseDate: releaseDate, voteAvarage: voteAvarage, overview: overview, genres: [], companies: [])
                     array.append(movie)
                 }
 
@@ -163,37 +184,14 @@ class Worker  : FetchDataProtocol, ParseDataProtocol{
   
                 return [genres, companies]
                 
+            }else{
+                return []
             }
-            
-            return []
         default:
             return []
         }
         
     }
-    
-    
-    
-}
 
-extension Worker : FetchImageFromURL{
-    
-    func getImageFromModel(model: MovieModel, _ block: @escaping (UIImage?) -> ()) {
-        
-        //Check in cache
-        
-        var image : UIImage? = nil
-        
-        request(model.imagePath).validate().responseJSON { (response) in
-            if response.response?.statusCode == 200{
-                print("ASDASDASDASDASDASDASD")
-                image = UIImage(data: response.data!)
-                block(image)
-            }else{
-                block(image)
-            }
-        }
-    }
-    
 }
 

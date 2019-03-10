@@ -38,7 +38,7 @@ class MainViewController: UIViewController {
         collectionView.collectionViewLayout = layout
         
         if first{
-            presenter.presentData(with: URLString.url(language: .en), urlType: .popular)
+            presenter.presentData(with: URLString.url(language: .en))
             first = false
         }
         
@@ -51,7 +51,7 @@ class MainViewController: UIViewController {
     }
     
     @IBAction func loadMoreHandle(_ sender: UIButton) {
-        
+        presenter.presentData(with: URLString.url(language: .en, loadMore: true))
     }
     
 }
@@ -87,7 +87,9 @@ extension MainViewController: MainViewControllerProtocol{
     }
     
     func showError() {
-        print("error")
+        let alertC = UIAlertController(title: "Error", message: "Lost internet connection", preferredStyle: .actionSheet)
+        alertC.addAction(UIAlertAction(title: "cancel", style: .cancel, handler: nil))
+        self.present(alertC, animated: true, completion: nil)
     }
     
 }
